@@ -4,10 +4,11 @@ from qiskit.visualization import circuit_drawer
 import matplotlib.pyplot as plt
 import numpy as np
 
-circuit = qiskit.QuantumCircuit(1, 1)
+circuit = qiskit.QuantumCircuit(2, 2)
 
 circuit.h(0)
-circuit.measure(0, 0)
+circuit.cx(0, 1)
+circuit.measure([0, 1], [0, 1])
 
 backend = AerSimulator()
 
@@ -17,10 +18,13 @@ job = backend.run(circuit, shots=num_shots)
 result = job.result()
 counts = result.get_counts(circuit)
 
-zero_counts = counts.get('0', 0) / num_shots
-one_counts = counts.get('1', 0) / num_shots
+print(counts)
 
-plt.bar(['0', '1'], [zero_counts, one_counts])
+
+zero_counts = counts.get('00', 0) / num_shots
+one_counts = counts.get('11', 0) / num_shots
+
+plt.bar(['00', '11'], [zero_counts, one_counts])
 
 for i, v in enumerate([zero_counts, one_counts]):
     plt.text(i, v + 0.01, str(round(v, 2)), ha='center')
