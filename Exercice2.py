@@ -1,35 +1,39 @@
 import qiskit
 from qiskit_aer import AerSimulator
-from qiskit.visualization import circuit_drawer
+from qiskit.visualization import plot_histogram, circuit_drawer
 import matplotlib.pyplot as plt
-import numpy as np
 
+# Création du circuit
 circuit = qiskit.QuantumCircuit(1, 1)
-
 circuit.h(0)
 circuit.measure(0, 0)
 
+# Affichage du circuit (sauvegarde dans un fichier)
+circuit_image = "circuit.png"
+circuit_drawer(circuit, output='mpl', filename=circuit_image)
+print(f"Le circuit a été sauvegardé dans {circuit_image}")
+
+# Simulation
 backend = AerSimulator()
-
 num_shots = 500
-
 job = backend.run(circuit, shots=num_shots)
 result = job.result()
 counts = result.get_counts(circuit)
 
-zero_counts = counts.get('0', 0) / num_shots
-one_counts = counts.get('1', 0) / num_shots
+print("Résultats:")
+print(counts)
 
-plt.bar(['0', '1'], [zero_counts, one_counts])
+# Création de l'histogramme
+plt.figure(figsize=(10, 6))
+plot_histogram(counts)
+plt.title("Distribution des résultats")
+plt.ylabel("Nombre d'occurrences")
+histogram_image = "histogram.png"
+plt.savefig(histogram_image)
+plt.close()
+print(f"L'histogramme a été sauvegardé dans {histogram_image}")
 
-for i, v in enumerate([zero_counts, one_counts]):
-    plt.text(i, v + 0.01, str(round(v, 2)), ha='center')
-
-plt.yticks(np.arange(0, plt.gca().get_ylim()[1], 0.15))
-plt.ylabel('Probabilities')
-plt.savefig('histogram.png')
-plt.grid(axis='y', linestyle='dashed', alpha=0.6)
-plt.show()
-
-filename = "circuit.png"
-circuit_drawer(circuit, output='mpl', filename=filename)
+# Calcul et affichage des probabilités
+zero_prob = counts.get('0', 0) / num_shots
+one_prob = counts.get('1', 0) / num_shots
+print(f"\nProbabilités :\n0: {zero_prob:.2f}\n1: {one_prob:.2f}")

@@ -1,5 +1,8 @@
-qiskit
+qiskit-ibm-provider
 qiskit-ibm-runtime
+python-dotenv
 qiskit_aer
 matplotlib
 pylatexenc
+qiskit
+numpy
