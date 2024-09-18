@@ -1,21 +1,27 @@
 import qiskit
+from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram, circuit_drawer
+from qiskit_aer.noise import NoiseModel
 import matplotlib.pyplot as plt
 
-# Création du circuit
 circuit = qiskit.QuantumCircuit(2, 2)
 circuit.h(0)
 circuit.cx(0, 1)
 circuit.measure([0, 1], [0, 1])
 
-# Affichage du circuit (sauvegarde dans un fichier)
 circuit_image = "circuit.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
-print(f"Le circuit a été sauvegardé dans {circuit_image}")
+
+## Noisy simulation
+# service = QiskitRuntimeService()
+# backend = service.least_busy(operational=True, simulator=False)
+# noise_model = NoiseModel.from_backend(backend)
+# backend = AerSimulator(noise_model=noise_model)
+
+backend = AerSimulator()
 
 # Simulation
-backend = AerSimulator()
 num_shots = 500
 job = backend.run(circuit, shots=num_shots)
 result = job.result()
@@ -27,12 +33,8 @@ print(counts)
 # Création de l'histogramme
 plt.figure(figsize=(10, 6))
 plot_histogram(counts)
-plt.title("Distribution des résultats")
-plt.ylabel("Nombre d'occurrences")
-histogram_image = "histogram.png"
+histogram_image = "histogram_ex03.png"
 plt.savefig(histogram_image)
-plt.close()
-print(f"L'histogramme a été sauvegardé dans {histogram_image}")
 
 # Calcul et affichage des probabilités
 zero_prob = counts.get('00', 0) / num_shots

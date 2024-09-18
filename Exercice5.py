@@ -1,22 +1,24 @@
 import qiskit
-from qiskit import QuantumCircuit, transpile
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit_aer import AerSimulator
+from qiskit_aer.noise import NoiseModel
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2 as Sampler
 from qiskit.visualization import plot_histogram, circuit_drawer
 import matplotlib.pyplot as plt
 
-def balanced_oracle(circuit, n):
+def bal_oracle(circuit, n):
 	for qubit in range(n):
 		circuit.cx(qubit, n)
 
-def constant_oracle(circuit, n):
-	pass
+def miracle(circuit, n):
+	circuit.cx(0, 1)
+	circuit.z(1)
 
 def deutsch_jozsa_circuit(n, oracle):
 	circuit = qiskit.QuantumCircuit(n + 1, n)
-	circuit.h(range(n))
 
 	circuit.x(n)
-	circuit.h(n)
+	circuit.h(range(n + 1))
 
 	oracle(circuit, n)
 
@@ -26,33 +28,41 @@ def deutsch_jozsa_circuit(n, oracle):
 
 	return circuit
 
-n = 3
+service = QiskitRuntimeService()
 
-# constant_circuit = deutsch_jozsa_circuit(n, constant_oracle)
-# circuit = constant_circuit
+qubits = 3
 
-balanced_circuit = deutsch_jozsa_circuit(n, balanced_oracle)
-circuit = balanced_circuit
+circuit = deutsch_jozsa_circuit(qubits, miracle)
 
 circuit_image = "circuit.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
 print(f"Le circuit a été sauvegardé dans {circuit_image}")
 
-# Simulation
-backend = AerSimulator()
-num_shots = 500
-job = backend.run(circuit, shots=num_shots)
-result = job.result()
-counts = result.get_counts(circuit)
+## Simulation
+# backend = AerSimulator()
+# num_shots = 500
+# job = backend.run(circuit, shots=num_shots)
+# result = job.result()
+# counts = result.get_counts(circuit)
+
+## Real device
+backend = service.least_busy(operational=True, simulator=False)
+
+manager = generate_preset_pass_manager(backend=backend, optimization_level=1)
+transpiled_circuit = manager.run(circuit)
+
+sampler = Sampler(backend)
+job = sampler.run([transpiled_circuit], shots=500)
+print(f"Job ID {job.job_id()}")
+
+results = job.result()
+result = results[0]
+counts = result.data.c.get_counts()
 
 print("Résultats:")
 print(counts)
 
 plt.figure(figsize=(10, 6))
 plot_histogram(counts)
-plt.title("Distribution des résultats")
-plt.ylabel("Nombre d'occurrences")
-histogram_image = "histogram.png"
+histogram_image = "histogram_ex05.png"
 plt.savefig(histogram_image)
-plt.close()
-print(f"L'histogramme a été sauvegardé dans {histogram_image}")
