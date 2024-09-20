@@ -1,8 +1,8 @@
 import qiskit
-from qiskit_ibm_runtime import QiskitRuntimeService
+# from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram, circuit_drawer
-from qiskit_aer.noise import NoiseModel
+# from qiskit_aer.noise import NoiseModel
 import matplotlib.pyplot as plt
 
 circuit = qiskit.QuantumCircuit(2, 2)
@@ -13,7 +13,7 @@ circuit.measure([0, 1], [0, 1])
 circuit_image = "circuit.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
 
-## Noisy simulation
+# Noisy simulation
 # service = QiskitRuntimeService()
 # backend = service.least_busy(operational=True, simulator=False)
 # noise_model = NoiseModel.from_backend(backend)

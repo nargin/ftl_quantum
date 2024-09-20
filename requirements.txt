@@ -1,4 +1,5 @@
 qiskit-ibm-provider
+qiskit-ibmq-provider
 qiskit-ibm-runtime
 python-dotenv
 qiskit_aer

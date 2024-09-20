@@ -1,32 +1,36 @@
 import qiskit
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
-from qiskit_aer import AerSimulator
-from qiskit_aer.noise import NoiseModel
+# from qiskit_aer import AerSimulator
+# from qiskit_aer.noise import NoiseModel
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2 as Sampler
 from qiskit.visualization import plot_histogram, circuit_drawer
 import matplotlib.pyplot as plt
 
+
 def bal_oracle(circuit, n):
-	for qubit in range(n):
-		circuit.cx(qubit, n)
+    for qubit in range(n):
+        circuit.cx(qubit, n)
+
 
 def miracle(circuit, n):
-	circuit.cx(0, 1)
-	circuit.z(1)
+    circuit.cx(0, 1)
+    circuit.z(1)
+
 
 def deutsch_jozsa_circuit(n, oracle):
-	circuit = qiskit.QuantumCircuit(n + 1, n)
+    circuit = qiskit.QuantumCircuit(n + 1, n)
 
-	circuit.x(n)
-	circuit.h(range(n + 1))
+    circuit.x(n)
+    circuit.h(range(n + 1))
 
-	oracle(circuit, n)
+    oracle(circuit, n)
 
-	circuit.h(range(n))
+    circuit.h(range(n))
 
-	circuit.measure(range(n), range(n))
+    circuit.measure(range(n), range(n))
 
-	return circuit
+    return circuit
+
 
 service = QiskitRuntimeService()
 
@@ -38,14 +42,14 @@ circuit_image = "circuit.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
 print(f"Le circuit a été sauvegardé dans {circuit_image}")
 
-## Simulation
+# Simulation
 # backend = AerSimulator()
 # num_shots = 500
 # job = backend.run(circuit, shots=num_shots)
 # result = job.result()
 # counts = result.get_counts(circuit)
 
-## Real device
+# Real device
 backend = service.least_busy(operational=True, simulator=False)
 
 manager = generate_preset_pass_manager(backend=backend, optimization_level=1)
