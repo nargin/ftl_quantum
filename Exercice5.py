@@ -38,9 +38,8 @@ qubits = 3
 
 circuit = deutsch_jozsa_circuit(qubits, miracle)
 
-circuit_image = "circuit.png"
+circuit_image = "circuit_ex05.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
-print(f"Le circuit a été sauvegardé dans {circuit_image}")
 
 # Simulation
 # backend = AerSimulator()

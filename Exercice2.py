@@ -7,7 +7,7 @@ circuit = qiskit.QuantumCircuit(1, 1)
 circuit.h(0)
 circuit.measure(0, 0)
 
-circuit_image = "circuit.png"
+circuit_image = "circuit_ex02.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
 
 # Simulation

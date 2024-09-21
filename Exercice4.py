@@ -9,7 +9,7 @@ circuit.h(0)
 circuit.cx(0, 1)
 circuit.measure([0, 1], [0, 1])
 
-circuit_image = "circuit.png"
+circuit_image = "circuit_ex04.png"
 circuit_drawer(circuit, output='mpl', filename=circuit_image)
 
 service = QiskitRuntimeService()
